@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrasi - Sistem Kerusakan Jalan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Daftar Akun Masyarakat</h2>
+            <p>Buat akun untuk melaporkan kerusakan jalan dan melacak status laporan</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="namaLengkap">Nama Lengkap *</label>
+                    <input type="text" id="namaLengkap" name="namaLengkap" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="telepon">Nomor Telepon *</label>
+                    <input type="tel" id="telepon" name="telepon" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="alamat">Alamat</label>
+                    <textarea id="alamat" name="alamat" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" required>
+                    <small class="form-help">Minimal 5 karakter</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password" required>
+                    <small class="form-help">Minimal 6 karakter</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Konfirmasi Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                    <label for="agreeTerms">Saya menyetujui syarat dan ketentuan</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-full">Daftar Sekarang</button>
+            </form>
+
+            <div class="auth-links">
+                <p>Sudah punya akun? <a href="login-masyarakat.html">Login di sini</a></p>
+                <p><a href="index.html">Kembali ke Beranda</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
