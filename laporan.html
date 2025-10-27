@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - Sistem Kerusakan Jalan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Laporan Kerusakan Jalan</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="data-kerusakan.html">Data Kerusakan</a></li>
+                    <li><a href="laporan.html" class="active">Laporan</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="laporan-header">
+            <h2>Generate Laporan</h2>
+            <div class="laporan-controls">
+                <div class="form-group">
+                    <label for="startDate">Tanggal Mulai</label>
+                    <input type="date" id="startDate">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">Tanggal Selesai</label>
+                    <input type="date" id="endDate">
+                </div>
+                <div class="form-group">
+                    <label for="reportType">Jenis Laporan</label>
+                    <select id="reportType">
+                        <option value="semua">Semua Data</option>
+                        <option value="ringan">Kerusakan Ringan</option>
+                        <option value="sedang">Kerusakan Sedang</option>
+                        <option value="berat">Kerusakan Berat</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="generateReport()">Generate Laporan</button>
+                <button class="btn btn-secondary" onclick="exportToPDF()">Export PDF</button>
+            </div>
+        </section>
+
+        <section class="laporan-content">
+            <div id="reportResults">
+                <div class="no-data">
+                    <p>Pilih parameter dan generate laporan untuk melihat hasil</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
