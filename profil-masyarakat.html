@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Saya - Sistem Kerusakan Jalan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Akun Masyarakat</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="profil-masyarakat.html" class="active">Profil Saya</a></li>
+                    <li><a href="laporan-masyarakat.html">Lapor Kerusakan</a></li>
+                    <li><a href="data-kerusakan.html">Data Kerusakan</a></li>
+                    <li><a href="#" id="logoutMasyarakatBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="profile-header">
+            <h2>Profil Saya</h2>
+            <div class="profile-actions">
+                <button class="btn btn-secondary" onclick="editProfile()">Edit Profil</button>
+            </div>
+        </section>
+
+        <div class="profile-layout">
+            <!-- Sidebar Profil -->
+            <aside class="profile-sidebar">
+                <div class="user-info-card">
+                    <div class="user-avatar">
+                        <span id="userInitial">U</span>
+                    </div>
+                    <h3 id="userName">Nama User</h3>
+                    <p id="userEmail">email@contoh.com</p>
+                    <p class="user-join">Member sejak: <span id="joinDate">2024</span></p>
+                </div>
+
+                <nav class="profile-nav">
+                    <a href="#laporan-saya" class="nav-item active">Laporan Saya</a>
+                    <a href="#profil" class="nav-item">Data Profil</a>
+                    <a href="#pengaturan" class="nav-item">Pengaturan</a>
+                </nav>
+            </aside>
+
+            <!-- Konten Utama -->
+            <div class="profile-content">
+                <!-- Section Laporan Saya -->
+                <section id="laporan-saya" class="content-section active">
+                    <h3>Laporan Saya</h3>
+                    <div class="laporan-stats">
+                        <div class="stat-small">
+                            <span class="stat-number" id="totalLaporan">0</span>
+                            <span class="stat-label">Total Laporan</span>
+                        </div>
+                        <div class="stat-small">
+                            <span class="stat-number" id="laporanDiproses">0</span>
+                            <span class="stat-label">Diproses</span>
+                        </div>
+                        <div class="stat-small">
+                            <span class="stat-number" id="laporanSelesai">0</span>
+                            <span class="stat-label">Selesai</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="myReportsTable">
+                            <thead>
+                                <tr>
+                                    <th>No. Laporan</th>
+                                    <th>Lokasi</th>
+                                    <th>Jenis Kerusakan</th>
+                                    <th>Tanggal Lapor</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="myReportsBody">
+                                <!-- Data laporan user -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Section Data Profil -->
+                <section id="profil" class="content-section">
+                    <h3>Data Profil</h3>
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <label>Nama Lengkap:</label>
+                            <span id="detailNama">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Email:</label>
+                            <span id="detailEmail">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Telepon:</label>
+                            <span id="detailTelepon">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Alamat:</label>
+                            <span id="detailAlamat">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <label>Username:</label>
+                            <span id="detailUsername">-</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Pengaturan -->
+                <section id="pengaturan" class="content-section">
+                    <h3>Pengaturan Akun</h3>
+                    <form id="changePasswordForm">
+                        <h4>Ubah Password</h4>
+                        <div class="form-group">
+                            <label for="currentPassword">Password Saat Ini</label>
+                            <input type="password" id="currentPassword" name="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Password Baru</label>
+                            <input type="password" id="newPassword" name="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Konfirmasi Password Baru</label>
+                            <input type="password" id="confirmNewPassword" name="confirmNewPassword">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ubah Password</button>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Edit Profil -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Profil</h3>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label for="editNama">Nama Lengkap</label>
+                    <input type="text" id="editNama" name="nama" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTelepon">Telepon</label>
+                    <input type="tel" id="editTelepon" name="telepon" required>
+                </div>
+                <div class="form-group">
+                    <label for="editAlamat">Alamat</label>
+                    <textarea id="editAlamat" name="alamat" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
