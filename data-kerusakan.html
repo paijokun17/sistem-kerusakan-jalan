@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Kerusakan - Sistem Kerusakan Jalan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Data Kerusakan Jalan</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="data-kerusakan.html" class="active">Data Kerusakan</a></li>
+                    <li><a href="laporan.html">Laporan</a></li>
+                    <li><a href="#" id="logoutBtn">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="data-header">
+            <h2>Data Seluruh Kerusakan Jalan</h2>
+            <div class="filter-controls">
+                <select id="filterStatus">
+                    <option value="">Semua Status</option>
+                    <option value="dilaporkan">Dilaporkan</option>
+                    <option value="dalam_perbaikan">Dalam Perbaikan</option>
+                    <option value="selesai">Selesai</option>
+                </select>
+                <select id="filterTingkat">
+                    <option value="">Semua Tingkat</option>
+                    <option value="ringan">Ringan</option>
+                    <option value="sedang">Sedang</option>
+                    <option value="berat">Berat</option>
+                </select>
+                <button class="btn btn-primary" onclick="filterData()">Filter</button>
+                <button class="btn btn-secondary" onclick="resetFilter()">Reset</button>
+            </div>
+        </section>
+
+        <section class="data-table">
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Lokasi</th>
+                            <th>Tingkat Kerusakan</th>
+                            <th>Deskripsi</th>
+                            <th>Tanggal Lapor</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Edit Data -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Edit Data Kerusakan Jalan</h3>
+            <form id="editForm">
+                <input type="hidden" id="editId" name="id">
+                <div class="form-group">
+                    <label for="editLokasi">Lokasi</label>
+                    <input type="text" id="editLokasi" name="lokasi" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTingkat">Tingkat Kerusakan</label>
+                    <select id="editTingkat" name="tingkat" required>
+                        <option value="ringan">Ringan</option>
+                        <option value="sedang">Sedang</option>
+                        <option value="berat">Berat</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDeskripsi">Deskripsi Kerusakan</label>
+                    <textarea id="editDeskripsi" name="deskripsi" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editKoordinat">Koordinat</label>
+                    <input type="text" id="editKoordinat" name="koordinat">
+                </div>
+                <div class="form-group">
+                    <label for="editStatus">Status</label>
+                    <select id="editStatus" name="status" required>
+                        <option value="dilaporkan">Dilaporkan</option>
+                        <option value="dalam_perbaikan">Dalam Perbaikan</option>
+                        <option value="selesai">Selesai</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Data</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
