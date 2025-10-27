@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pendataan Kerusakan Jalan</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Sistem Informasi Pendataan Kerusakan Jalan</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html" class="active">Beranda</a></li>
+                    <li><a href="login.html">Login</a></li>
+                    <li><a href="data-kerusakan.html">Data Kerusakan</a></li>
+                    <li><a href="laporan.html">Laporan</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <h2>Selamat Datang di Sistem Pendataan Kerusakan Jalan</h2>
+            <p>Sistem ini membantu dalam pendataan dan monitoring kondisi jalan untuk perbaikan yang lebih efektif</p>
+            <a href="login.html" class="btn">Login Admin</a>
+        </section>
+
+        <section class="features">
+            <div class="feature-card">
+                <h3>Pendataan</h3>
+                <p>Input data kerusakan jalan dengan detail lokasi dan tingkat kerusakan</p>
+            </div>
+            <div class="feature-card">
+                <h3>Monitoring</h3>
+                <p>Pantau perkembangan perbaikan jalan secara real-time</p>
+            </div>
+            <div class="feature-card">
+                <h3>Laporan</h3>
+                <p>Generate laporan untuk analisis dan evaluasi</p>
+            </div>
+        </section>
+
+        <section class="stats">
+            <h2>Statistik Kerusakan Jalan</h2>
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="total-kerusakan">0</span>
+                    <span class="stat-label">Total Kerusakan</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="sedang-diperbaiki">0</span>
+                    <span class="stat-label">Sedang Diperbaiki</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="selesai-diperbaiki">0</span>
+                    <span class="stat-label">Selesai Diperbaiki</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Sistem Informasi Pendataan Kerusakan Jalan. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
