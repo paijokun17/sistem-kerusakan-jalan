@@ -1,548 +1,317 @@
-// Data Storage menggunakan localStorage
-class DataStorage {
+// ===== SISTEM AUTHENTIKASI MASYARAKAT =====
+
+class AuthMasyarakat {
     constructor() {
-        this.key = 'kerusakanJalanData';
-        this.initData();
+        this.key = 'usersMasyarakat';
+        this.currentUserKey = 'currentMasyarakatUser';
+        this.initUsers();
     }
 
-    initData() {
+    initUsers() {
         if (!localStorage.getItem(this.key)) {
-            const sampleData = [
+            const sampleUsers = [
                 {
                     id: 1,
-                    lokasi: 'Jl. Merdeka No. 123',
-                    tingkat: 'sedang',
-                    deskripsi: 'Lubang dengan diameter 30cm dan kedalaman 15cm',
-                    koordinat: '-6.2088, 106.8456',
-                    tanggalLapor: '2024-01-15',
-                    status: 'dilaporkan'
-                },
-                {
-                    id: 2,
-                    lokasi: 'Jl. Sudirman No. 45',
-                    tingkat: 'berat',
-                    deskripsi: 'Retakan memanjang sepanjang 50 meter',
-                    koordinat: '-6.2297, 106.8220',
-                    tanggalLapor: '2024-01-10',
-                    status: 'dalam_perbaikan'
-                },
-                {
-                    id: 3,
-                    lokasi: 'Jl. Thamrin No. 78',
-                    tingkat: 'ringan',
-                    deskripsi: 'Permukaan jalan bergelombang ringan',
-                    koordinat: '-6.1865, 106.8342',
-                    tanggalLapor: '2024-01-20',
-                    status: 'selesai'
+                    namaLengkap: "Budi Santoso",
+                    email: "budi@email.com",
+                    telepon: "081234567890",
+                    alamat: "Jl. Contoh No. 123, Jakarta",
+                    username: "budi",
+                    password: "budi123",
+                    tanggalDaftar: "2024-01-01"
                 }
             ];
-            this.saveData(sampleData);
+            this.saveUsers(sampleUsers);
         }
     }
 
-    getData() {
+    getUsers() {
         return JSON.parse(localStorage.getItem(this.key)) || [];
     }
 
-    saveData(data) {
-        localStorage.setItem(this.key, JSON.stringify(data));
+    saveUsers(users) {
+        localStorage.setItem(this.key, JSON.stringify(users));
     }
 
-    addData(newData) {
-        const data = this.getData();
-        const newId = data.length > 0 ? Math.max(...data.map(item => item.id)) + 1 : 1;
-        newData.id = newId;
-        newData.tanggalLapor = new Date().toISOString().split('T')[0];
-        data.push(newData);
-        this.saveData(data);
-        return newData;
-    }
-
-    updateData(updatedData) {
-        const data = this.getData();
-        const index = data.findIndex(item => item.id === updatedData.id);
-        if (index !== -1) {
-            data[index] = { ...data[index], ...updatedData };
-            this.saveData(data);
-            return true;
+    register(userData) {
+        const users = this.getUsers();
+        
+        // Check if username or email already exists
+        if (users.find(u => u.username === userData.username)) {
+            return { success: false, message: 'Username sudah digunakan' };
         }
-        return false;
-    }
+        
+        if (users.find(u => u.email === userData.email)) {
+            return { success: false, message: 'Email sudah terdaftar' };
+        }
 
-    deleteData(id) {
-        const data = this.getData();
-        const filteredData = data.filter(item => item.id !== id);
-        this.saveData(filteredData);
-        return filteredData.length !== data.length;
-    }
-}
+        const newUser = {
+            id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+            ...userData,
+            tanggalDaftar: new Date().toISOString().split('T')[0]
+        };
 
-// Inisialisasi storage
-const dataStorage = new DataStorage();
-
-// Authentication
-class Auth {
-    constructor() {
-        this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        users.push(newUser);
+        this.saveUsers(users);
+        
+        return { success: true, message: 'Registrasi berhasil!', user: newUser };
     }
 
     login(username, password) {
-        // Simple authentication - in real app, this would be server-side
-        if (username === 'admin' && password === 'admin123') {
-            this.isLoggedIn = true;
-            localStorage.setItem('isLoggedIn', 'true');
+        const users = this.getUsers();
+        const user = users.find(u => 
+            (u.username === username || u.email === username) && 
+            u.password === password
+        );
+
+        if (user) {
+            localStorage.setItem(this.currentUserKey, JSON.stringify(user));
+            return { success: true, user };
+        } else {
+            return { success: false, message: 'Username/email atau password salah' };
+        }
+    }
+
+    logout() {
+        localStorage.removeItem(this.currentUserKey);
+    }
+
+    getCurrentUser() {
+        const user = localStorage.getItem(this.currentUserKey);
+        return user ? JSON.parse(user) : null;
+    }
+
+    updateUser(updatedUser) {
+        const users = this.getUsers();
+        const index = users.findIndex(u => u.id === updatedUser.id);
+        
+        if (index !== -1) {
+            users[index] = { ...users[index], ...updatedUser };
+            this.saveUsers(users);
+            localStorage.setItem(this.currentUserKey, JSON.stringify(users[index]));
             return true;
         }
         return false;
     }
-
-    logout() {
-        this.isLoggedIn = false;
-        localStorage.removeItem('isLoggedIn');
-    }
-
-    checkAuth() {
-        return this.isLoggedIn;
-    }
 }
 
-const auth = new Auth();
+const authMasyarakat = new AuthMasyarakat();
 
-// Utility Functions
-function formatDate(dateString) {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('id-ID', options);
-}
-
-function getStatusText(status) {
-    const statusMap = {
-        'dilaporkan': 'Dilaporkan',
-        'dalam_perbaikan': 'Dalam Perbaikan',
-        'selesai': 'Selesai'
-    };
-    return statusMap[status] || status;
-}
-
-function getTingkatText(tingkat) {
-    const tingkatMap = {
-        'ringan': 'Ringan',
-        'sedang': 'Sedang',
-        'berat': 'Berat'
-    };
-    return tingkatMap[tingkat] || tingkat;
-}
-
-// Page Specific Functions
-
-// Home Page
-function updateHomeStats() {
-    const data = dataStorage.getData();
-    const total = data.length;
-    const sedangDiperbaiki = data.filter(item => item.status === 'dalam_perbaikan').length;
-    const selesaiDiperbaiki = data.filter(item => item.status === 'selesai').length;
-
-    document.getElementById('total-kerusakan').textContent = total;
-    document.getElementById('sedang-diperbaiki').textContent = sedangDiperbaiki;
-    document.getElementById('selesai-diperbaiki').textContent = selesaiDiperbaiki;
-}
-
-// Login Page
-function setupLoginForm() {
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+// ===== FITUR REGISTRASI =====
+function setupRegisterForm() {
+    const form = document.getElementById('registerForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const formData = {
+                namaLengkap: document.getElementById('namaLengkap').value,
+                email: document.getElementById('email').value,
+                telepon: document.getElementById('telepon').value,
+                alamat: document.getElementById('alamat').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validasi
+            if (formData.password !== confirmPassword) {
+                alert('Konfirmasi password tidak sesuai');
+                return;
+            }
+
+            if (formData.password.length < 6) {
+                alert('Password minimal 6 karakter');
+                return;
+            }
+
+            if (formData.username.length < 5) {
+                alert('Username minimal 5 karakter');
+                return;
+            }
+
+            const result = authMasyarakat.register(formData);
+            
+            if (result.success) {
+                alert('Registrasi berhasil! Silakan login.');
+                window.location.href = 'login-masyarakat.html';
+            } else {
+                alert(result.message);
+            }
+        });
+    }
+}
+
+// ===== FITUR LOGIN MASYARAKAT =====
+function setupLoginMasyarakatForm() {
+    const form = document.getElementById('loginMasyarakatForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            if (auth.login(username, password)) {
-                window.location.href = 'dashboard.html';
+            const result = authMasyarakat.login(username, password);
+            
+            if (result.success) {
+                window.location.href = 'profil-masyarakat.html';
             } else {
-                alert('Username atau password salah!');
+                alert(result.message);
             }
         });
     }
 }
 
-// Dashboard Page
-function updateDashboardStats() {
-    const data = dataStorage.getData();
-    const total = data.length;
-    const ringan = data.filter(item => item.tingkat === 'ringan').length;
-    const sedang = data.filter(item => item.tingkat === 'sedang').length;
-    const berat = data.filter(item => item.tingkat === 'berat').length;
-
-    document.getElementById('dashboard-total').textContent = total;
-    document.getElementById('dashboard-ringan').textContent = ringan;
-    document.getElementById('dashboard-sedang').textContent = sedang;
-    document.getElementById('dashboard-berat').textContent = berat;
-}
-
-function loadRecentData() {
-    const data = dataStorage.getData().slice(-5).reverse(); // Get last 5 entries
-    const tableBody = document.getElementById('recentTableBody');
+// ===== FITUR PROFIL MASYARAKAT =====
+function loadProfilePage() {
+    const currentUser = authMasyarakat.getCurrentUser();
     
-    tableBody.innerHTML = data.map((item, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${item.lokasi}</td>
-            <td><span class="tingkat-${item.tingkat}">${getTingkatText(item.tingkat)}</span></td>
-            <td>${formatDate(item.tanggalLapor)}</td>
-            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-            <td>
-                <button class="btn" onclick="editData(${item.id})">Edit</button>
-                <button class="btn btn-secondary" onclick="deleteData(${item.id})">Hapus</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-// Data Kerusakan Page
-function loadAllData() {
-    const data = dataStorage.getData();
-    const tableBody = document.getElementById('dataTableBody');
-    
-    tableBody.innerHTML = data.map((item, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${item.lokasi}</td>
-            <td><span class="tingkat-${item.tingkat}">${getTingkatText(item.tingkat)}</span></td>
-            <td>${item.deskripsi}</td>
-            <td>${formatDate(item.tanggalLapor)}</td>
-            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-            <td>
-                <button class="btn" onclick="editData(${item.id})">Edit</button>
-                <button class="btn btn-secondary" onclick="deleteData(${item.id})">Hapus</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function filterData() {
-    const statusFilter = document.getElementById('filterStatus').value;
-    const tingkatFilter = document.getElementById('filterTingkat').value;
-    
-    let data = dataStorage.getData();
-    
-    if (statusFilter) {
-        data = data.filter(item => item.status === statusFilter);
-    }
-    
-    if (tingkatFilter) {
-        data = data.filter(item => item.tingkat === tingkatFilter);
-    }
-    
-    const tableBody = document.getElementById('dataTableBody');
-    tableBody.innerHTML = data.map((item, index) => `
-        <tr>
-            <td>${index + 1}</td>
-            <td>${item.lokasi}</td>
-            <td><span class="tingkat-${item.tingkat}">${getTingkatText(item.tingkat)}</span></td>
-            <td>${item.deskripsi}</td>
-            <td>${formatDate(item.tanggalLapor)}</td>
-            <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-            <td>
-                <button class="btn" onclick="editData(${item.id})">Edit</button>
-                <button class="btn btn-secondary" onclick="deleteData(${item.id})">Hapus</button>
-            </td>
-        </tr>
-    `).join('');
-}
-
-function resetFilter() {
-    document.getElementById('filterStatus').value = '';
-    document.getElementById('filterTingkat').value = '';
-    loadAllData();
-}
-
-// Modal Functions
-function tambahData() {
-    const modal = document.getElementById('tambahModal');
-    modal.style.display = 'block';
-}
-
-function editData(id) {
-    const data = dataStorage.getData();
-    const item = data.find(item => item.id === id);
-    
-    if (item) {
-        document.getElementById('editId').value = item.id;
-        document.getElementById('editLokasi').value = item.lokasi;
-        document.getElementById('editTingkat').value = item.tingkat;
-        document.getElementById('editDeskripsi').value = item.deskripsi;
-        document.getElementById('editKoordinat').value = item.koordinat || '';
-        document.getElementById('editStatus').value = item.status;
-        
-        const modal = document.getElementById('editModal');
-        modal.style.display = 'block';
-    }
-}
-
-function deleteData(id) {
-    if (confirm('Apakah Anda yakin ingin menghapus data ini?')) {
-        if (dataStorage.deleteData(id)) {
-            alert('Data berhasil dihapus');
-            if (window.location.pathname.includes('dashboard.html')) {
-                loadRecentData();
-                updateDashboardStats();
-            } else if (window.location.pathname.includes('data-kerusakan.html')) {
-                loadAllData();
-            }
-        } else {
-            alert('Gagal menghapus data');
-        }
-    }
-}
-
-// Form Handlers
-function setupTambahForm() {
-    const form = document.getElementById('tambahForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                lokasi: document.getElementById('lokasi').value,
-                tingkat: document.getElementById('tingkat').value,
-                deskripsi: document.getElementById('deskripsi').value,
-                koordinat: document.getElementById('koordinat').value,
-                status: 'dilaporkan'
-            };
-            
-            dataStorage.addData(formData);
-            alert('Data berhasil ditambahkan');
-            
-            // Reset form and close modal
-            form.reset();
-            document.getElementById('tambahModal').style.display = 'none';
-            
-            // Reload data
-            if (window.location.pathname.includes('dashboard.html')) {
-                loadRecentData();
-                updateDashboardStats();
-            }
-        });
-    }
-}
-
-function setupEditForm() {
-    const form = document.getElementById('editForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                id: parseInt(document.getElementById('editId').value),
-                lokasi: document.getElementById('editLokasi').value,
-                tingkat: document.getElementById('editTingkat').value,
-                deskripsi: document.getElementById('editDeskripsi').value,
-                koordinat: document.getElementById('editKoordinat').value,
-                status: document.getElementById('editStatus').value
-            };
-            
-            if (dataStorage.updateData(formData)) {
-                alert('Data berhasil diupdate');
-                
-                // Close modal
-                document.getElementById('editModal').style.display = 'none';
-                
-                // Reload data
-                if (window.location.pathname.includes('dashboard.html')) {
-                    loadRecentData();
-                    updateDashboardStats();
-                } else if (window.location.pathname.includes('data-kerusakan.html')) {
-                    loadAllData();
-                }
-            } else {
-                alert('Gagal mengupdate data');
-            }
-        });
-    }
-}
-
-// Laporan Functions
-function generateReport() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    const reportType = document.getElementById('reportType').value;
-    
-    let data = dataStorage.getData();
-    
-    // Filter by date
-    if (startDate && endDate) {
-        data = data.filter(item => {
-            const itemDate = new Date(item.tanggalLapor);
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            return itemDate >= start && itemDate <= end;
-        });
-    }
-    
-    // Filter by type
-    if (reportType !== 'semua') {
-        data = data.filter(item => item.tingkat === reportType);
-    }
-    
-    displayReportResults(data);
-}
-
-function displayReportResults(data) {
-    const resultsDiv = document.getElementById('reportResults');
-    
-    if (data.length === 0) {
-        resultsDiv.innerHTML = '<div class="no-data"><p>Tidak ada data yang sesuai dengan kriteria</p></div>';
+    if (!currentUser) {
+        window.location.href = 'login-masyarakat.html';
         return;
     }
+
+    // Update user info
+    document.getElementById('userName').textContent = currentUser.namaLengkap;
+    document.getElementById('userEmail').textContent = currentUser.email;
+    document.getElementById('userInitial').textContent = currentUser.namaLengkap.charAt(0).toUpperCase();
+    document.getElementById('joinDate').textContent = currentUser.tanggalDaftar;
+
+    // Update profile details
+    document.getElementById('detailNama').textContent = currentUser.namaLengkap;
+    document.getElementById('detailEmail').textContent = currentUser.email;
+    document.getElementById('detailTelepon').textContent = currentUser.telepon;
+    document.getElementById('detailAlamat').textContent = currentUser.alamat || '-';
+    document.getElementById('detailUsername').textContent = currentUser.username;
+
+    // Load user's reports
+    loadUserReports(currentUser.id);
+}
+
+function loadUserReports(userId) {
+    const laporanData = laporanStorage.getData();
+    const userReports = laporanData.filter(laporan => 
+        laporan.emailPelapor === authMasyarakat.getCurrentUser().email
+    );
+
+    // Update stats
+    document.getElementById('totalLaporan').textContent = userReports.length;
+    document.getElementById('laporanDiproses').textContent = userReports.filter(r => r.status === 'dalam_perbaikan').length;
+    document.getElementById('laporanSelesai').textContent = userReports.filter(r => r.status === 'selesai').length;
+
+    // Update table
+    const tableBody = document.getElementById('myReportsBody');
+    tableBody.innerHTML = userReports.map(report => `
+        <tr>
+            <td>${report.nomorLaporan}</td>
+            <td>${report.lokasi}</td>
+            <td>${report.jenisKerusakan}</td>
+            <td>${formatDate(report.tanggalLapor)}</td>
+            <td><span class="status-badge status-${report.status}">${getStatusText(report.status)}</span></td>
+            <td>
+                <button class="btn" onclick="viewReportDetail(${report.id})">Detail</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function editProfile() {
+    const currentUser = authMasyarakat.getCurrentUser();
     
-    const ringan = data.filter(item => item.tingkat === 'ringan').length;
-    const sedang = data.filter(item => item.tingkat === 'sedang').length;
-    const berat = data.filter(item => item.tingkat === 'berat').length;
+    document.getElementById('editNama').value = currentUser.namaLengkap;
+    document.getElementById('editEmail').value = currentUser.email;
+    document.getElementById('editTelepon').value = currentUser.telepon;
+    document.getElementById('editAlamat').value = currentUser.alamat || '';
     
-    const dilaporkan = data.filter(item => item.status === 'dilaporkan').length;
-    const dalamPerbaikan = data.filter(item => item.status === 'dalam_perbaikan').length;
-    const selesai = data.filter(item => item.status === 'selesai').length;
-    
-    resultsDiv.innerHTML = `
-        <div class="report-summary">
-            <h3>Ringkasan Laporan</h3>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <h4>Total Data</h4>
-                    <span class="summary-value">${data.length}</span>
-                </div>
-                <div class="summary-item">
-                    <h4>Kerusakan Ringan</h4>
-                    <span class="summary-value">${ringan}</span>
-                </div>
-                <div class="summary-item">
-                    <h4>Kerusakan Sedang</h4>
-                    <span class="summary-value">${sedang}</span>
-                </div>
-                <div class="summary-item">
-                    <h4>Kerusakan Berat</h4>
-                    <span class="summary-value">${berat}</span>
-                </div>
-            </div>
+    document.getElementById('editProfileModal').style.display = 'block';
+}
+
+function setupEditProfileForm() {
+    const form = document.getElementById('editProfileForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <h4>Dilaporkan</h4>
-                    <span class="summary-value">${dilaporkan}</span>
-                </div>
-                <div class="summary-item">
-                    <h4>Dalam Perbaikan</h4>
-                    <span class="summary-value">${dalamPerbaikan}</span>
-                </div>
-                <div class="summary-item">
-                    <h4>Selesai</h4>
-                    <span class="summary-value">${selesai}</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="report-details">
-            <h3>Detail Data</h3>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Lokasi</th>
-                            <th>Tingkat</th>
-                            <th>Deskripsi</th>
-                            <th>Tanggal</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${data.map((item, index) => `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td>${item.lokasi}</td>
-                                <td><span class="tingkat-${item.tingkat}">${getTingkatText(item.tingkat)}</span></td>
-                                <td>${item.deskripsi}</td>
-                                <td>${formatDate(item.tanggalLapor)}</td>
-                                <td><span class="status-badge status-${item.status}">${getStatusText(item.status)}</span></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-}
+            const updatedData = {
+                namaLengkap: document.getElementById('editNama').value,
+                email: document.getElementById('editEmail').value,
+                telepon: document.getElementById('editTelepon').value,
+                alamat: document.getElementById('editAlamat').value
+            };
 
-function exportToPDF() {
-    alert('Fitur export PDF akan diimplementasikan dengan library seperti jsPDF');
-    // Implementation would use jsPDF library to generate PDF
-}
-
-// Modal Close Handlers
-function setupModalHandlers() {
-    // Close modal when clicking on X
-    const closeButtons = document.querySelectorAll('.close');
-    closeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            this.closest('.modal').style.display = 'none';
-        });
-    });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
-        const modals = document.querySelectorAll('.modal');
-        modals.forEach(modal => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+            const currentUser = authMasyarakat.getCurrentUser();
+            if (authMasyarakat.updateUser({ ...currentUser, ...updatedData })) {
+                alert('Profil berhasil diupdate!');
+                document.getElementById('editProfileModal').style.display = 'none';
+                loadProfilePage(); // Reload data
             }
         });
-    });
+    }
 }
 
-// Logout Handler
-function setupLogout() {
-    const logoutButtons = document.querySelectorAll('#logoutBtn');
-    logoutButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
+// ===== NAVIGATION PROFILE =====
+function setupProfileNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', function(e) {
             e.preventDefault();
-            auth.logout();
-            window.location.href = 'index.html';
+            
+            // Remove active class from all
+            navItems.forEach(nav => nav.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // Add active class to clicked
+            this.classList.add('active');
+            
+            // Show corresponding section
+            const targetId = this.getAttribute('href').substring(1);
+            document.getElementById(targetId).classList.add('active');
         });
     });
 }
 
-// Auth Protection
-function checkAuthForPages() {
-    const protectedPages = ['dashboard.html', 'data-kerusakan.html', 'laporan.html'];
-    const currentPage = window.location.pathname.split('/').pop();
+// ===== UPDATE LAPORAN MASYARAKAT =====
+function setupLaporanMasyarakatWithAuth() {
+    const currentUser = authMasyarakat.getCurrentUser();
+    const form = document.getElementById('laporanForm');
     
-    if (protectedPages.includes(currentPage) && !auth.checkAuth()) {
-        window.location.href = 'login.html';
+    if (form && currentUser) {
+        // Auto-fill user data if logged in
+        document.getElementById('namaPelapor').value = currentUser.namaLengkap;
+        document.getElementById('emailPelapor').value = currentUser.email;
+        document.getElementById('teleponPelapor').value = currentUser.telepon;
     }
 }
 
-// Initialize Page
+// ===== UPDATE MAIN INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', function() {
-    // Check authentication for protected pages
-    checkAuthForPages();
+    // ... existing code ...
     
-    // Setup common handlers
-    setupModalHandlers();
-    setupLogout();
-    setupLoginForm();
-    setupTambahForm();
-    setupEditForm();
+    // Setup auth masyarakat
+    setupRegisterForm();
+    setupLoginMasyarakatForm();
     
-    // Page-specific initialization
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-        updateHomeStats();
+    // Setup profile page
+    if (window.location.pathname.includes('profil-masyarakat.html')) {
+        loadProfilePage();
+        setupEditProfileForm();
+        setupProfileNavigation();
     }
     
-    if (window.location.pathname.includes('dashboard.html')) {
-        updateDashboardStats();
-        loadRecentData();
-    }
+    // Setup laporan dengan auth
+    setupLaporanMasyarakatWithAuth();
     
-    if (window.location.pathname.includes('data-kerusakan.html')) {
-        loadAllData();
+    // Logout handler masyarakat
+    const logoutBtn = document.getElementById('logoutMasyarakatBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            authMasyarakat.logout();
+            window.location.href = 'index.html';
+        });
     }
 });
