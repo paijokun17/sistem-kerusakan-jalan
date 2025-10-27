@@ -9,37 +9,58 @@
 <body>
     <header>
         <div class="container">
-            <h1>Sistem Informasi Pendataan Kerusakan Jalan</h1>
-            <nav>
-                <ul>
-                    <li><a href="index.html" class="active">Beranda</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="data-kerusakan.html">Data Kerusakan</a></li>
-                    <li><a href="laporan.html">Laporan</a></li>
-                </ul>
-            </nav>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🛣️</div>
+                    <div class="logo-text">
+                        <h1>Sistem Kerusakan Jalan</h1>
+                        <p>Dinas Pekerjaan Umum</p>
+                    </div>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="index.html" class="active">🏠 Beranda</a></li>
+                        <li><a href="laporan-masyarakat.html">📨 Lapor Kerusakan</a></li>
+                        <li><a href="data-kerusakan.html">📊 Data Kerusakan</a></li>
+                        <li><a href="login.html">🔐 Login Admin</a></li>
+                        <li><a href="login-masyarakat.html">👥 Login Masyarakat</a></li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     </header>
 
     <main class="container">
         <section class="hero">
-            <h2>Selamat Datang di Sistem Pendataan Kerusakan Jalan</h2>
-            <p>Sistem ini membantu dalam pendataan dan monitoring kondisi jalan untuk perbaikan yang lebih efektif</p>
-            <a href="login.html" class="btn">Login Admin</a>
+            <div class="hero-content">
+                <h2>Selamat Datang di Sistem Pendataan Kerusakan Jalan</h2>
+                <p>Bersama kita wujudkan jalan yang aman dan nyaman untuk semua</p>
+                <div class="hero-actions">
+                    <a href="laporan-masyarakat.html" class="btn btn-primary btn-large">
+                        📨 Laporkan Kerusakan
+                    </a>
+                    <a href="data-kerusakan.html" class="btn btn-outline btn-large">
+                        📊 Lihat Data Kerusakan
+                    </a>
+                </div>
+            </div>
         </section>
 
         <section class="features">
             <div class="feature-card">
-                <h3>Pendataan</h3>
-                <p>Input data kerusakan jalan dengan detail lokasi dan tingkat kerusakan</p>
+                <div class="feature-icon">📝</div>
+                <h3>Lapor Kerusakan</h3>
+                <p>Laporkan kerusakan jalan dengan mudah melalui form online yang lengkap dengan upload foto</p>
             </div>
             <div class="feature-card">
-                <h3>Monitoring</h3>
-                <p>Pantau perkembangan perbaikan jalan secara real-time</p>
+                <div class="feature-icon">👁️</div>
+                <h3>Pantau Progress</h3>
+                <p>Pantau perkembangan perbaikan jalan secara real-time dan transparan</p>
             </div>
             <div class="feature-card">
-                <h3>Laporan</h3>
-                <p>Generate laporan untuk analisis dan evaluasi</p>
+                <div class="feature-icon">📈</div>
+                <h3>Analisis Data</h3>
+                <p>Data kerusakan jalan teranalisis dengan baik untuk perencanaan perbaikan</p>
             </div>
         </section>
 
@@ -57,6 +78,10 @@
                 <div class="stat-item">
                     <span class="stat-number" id="selesai-diperbaiki">0</span>
                     <span class="stat-label">Selesai Diperbaiki</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="laporan-masyarakat">0</span>
+                    <span class="stat-label">Laporan Masyarakat</span>
                 </div>
             </div>
         </section>
